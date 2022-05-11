@@ -1,0 +1,9 @@
+.profile__overlay{
+    height: 120px;
+    width: 120px;
+}
+.profile__overlay:hover{
+    background-image: url("../../../images/editAvatar.png");
+    background-position: center;
+    background-repeat: no-repeat;
+}

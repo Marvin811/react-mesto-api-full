@@ -1,0 +1,10 @@
+.element__like-amount {
+    color: black;
+    font-family: "Inter", "Arial", sans-serif;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 13px;
+    line-height: 16px;
+    padding-top: 3px;
+    margin-right: 5px;
+}

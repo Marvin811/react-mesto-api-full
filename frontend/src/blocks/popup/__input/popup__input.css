@@ -1,0 +1,19 @@
+.popup__input {
+  border: 0;
+  padding: 0;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 17px;
+  outline: none;
+  padding-bottom: 8.098px;
+  border-bottom: 1px solid rgb(0, 0, 0, 0.2);
+  width: 100%;
+}
+
+.popup__input:last-child {
+  margin-bottom: 45px;
+  padding:0;
+}
+.popup__input.popup__input_type_error{
+  border-color: red;
+}

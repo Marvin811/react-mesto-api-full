@@ -1,0 +1,17 @@
+.entrance__link{
+    font-family: "Inter", Arial, sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 17px;
+    text-align: center;
+    margin-top: 15px;
+    border: 0;
+    color: #FFFFFF;
+    text-decoration: none;
+    transition: opacity .3s ease-in;
+}
+.entrance__link:hover {
+    opacity: 0.6;
+    cursor: pointer;
+}

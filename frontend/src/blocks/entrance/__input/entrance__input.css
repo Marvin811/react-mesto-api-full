@@ -1,0 +1,20 @@
+.entrance__input{
+    font-family: "Inter", "Arial", sans-serif;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 17px;
+    background-color: black;
+    border: 0;
+    border-radius: 2px;
+    border-bottom: 2px solid #ccc;
+    color: #FFFFFF;
+    width: 358px;
+    box-sizing: border-box;
+    margin-top: 6px;
+}
+
+.entrance__input:last-of-type {
+    margin-top: 42px;
+    margin-bottom: 210px;
+}
