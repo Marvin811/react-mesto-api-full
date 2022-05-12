@@ -1,7 +1,7 @@
 class Api {
     constructor({address, token}) {
         this._address = address;
-        this._token = token;
+        this._token = localStorage.getItem("jwt");
     }
 
     _handleResponse = (response) => {
@@ -93,8 +93,7 @@ class Api {
 }
 
 const api = new Api({
-    address: 'https://mesto.nomoreparties.co/v1/cohort-35',
-    token: '7e1e7983-5be2-461b-86d0-72ce046c0cdb'
+    address: 'https://marvin811.nomoredomains.xyz'
 })
 
 export default api;

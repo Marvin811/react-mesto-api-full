@@ -46,7 +46,7 @@ function App() {
   const handleEditProfileClick = () => setIsEditProfilePopupOpen(true);
   const handleAddPlaceClick = () => setIsAddPlacePopupOpen(true);
   const handleLoggedIn = () => setLoggetIn(true);
-  const handleIsInfoTooltip = () => setInfoTooltip(true);
+//  const handleIsInfoTooltip = () => setInfoTooltip(true);
 
   const handleCardClick = (card) => setSelectorCard(card);
 
@@ -70,9 +70,9 @@ function App() {
     }
   }, [loggedIn]);
 
-  React.useEffect(() => {
-    tokenCheck();
-  }, []);
+//  React.useEffect(() => {
+//    tokenCheck();
+//  }, []);
 
   const handleCardLike = (card) => {
     // Снова проверяем, есть ли уже лайк на этой карточке
@@ -131,31 +131,33 @@ function App() {
     setCardToDelete(card);
   };
 
-  function tokenCheck() {
-    if (localStorage.getItem("token")) {
-      const jwt = localStorage.getItem("token");
-      Auth.getContent(jwt)
-        .then((res) => {
-          if (res) {
-            handleLoggedIn();
-            setEmail(res.data.email);
-            history.push("/");
-          }
-        })
-        .catch((err) => console.log(err));
-    }
-  }
+//  function tokenCheck() {
+//    if (localStorage.getItem("token")) {
+//      const jwt = localStorage.getItem("token");
+//      Auth.getContent(jwt)
+//        .then((res) => {
+//          if (res) {
+//            handleLoggedIn();
+//            setEmail(res.data.email);
+//            history.push("/");
+//          }
+//        })
+//        .catch((err) => console.log(err));
+//    }
+//  }
 
   function handleRegister(password, email) {
     return Auth.register(password, email)
-      .then(() => {
+      .then(data => {
+        if(data){
         setEmail(email);
         history.push("/sign-in");
         setInfoTooltip(true);
         setMessage({
           imageTooltip: success,
           titleTooltip: "Вы успешно зарегистрировались!",
-        });
+        });}
+        
       })
       .catch(() =>
       setInfoTooltip(true),
@@ -167,19 +169,16 @@ function App() {
   }
 
   function handleLogin(email, password) {
-    return Auth.authorize(email, password)
-      .then((data) => {
-        if (data.token) {
+    Auth.authorize(email, password)
+      .then(res => {
           setEmail(email);
-          setInfoTooltip(false);
+          //setInfoTooltip(false);
           setMessage({
             imageTooltip: success,
             titleTooltip: "Вы успешно вошли!",
           });
-          localStorage.setItem("token", data.token);
           handleLoggedIn();
           history.push("/");
-        }
       })
       .catch((err) => 
       console.log(err),
@@ -191,7 +190,6 @@ function App() {
       )
   }
   function handleSignOut() {
-    localStorage.removeItem("token");
     setLoggetIn(false);
     setEmail("");
     history.push("/sign-in");
