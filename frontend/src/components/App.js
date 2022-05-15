@@ -25,7 +25,7 @@ function App() {
   const [currentCard, setCurrentCard] = useState([]);
 
   const history = useHistory();
-  const [loggedIn, setLoggetIn] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(false);
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState({
     imageTooltip: "",
@@ -45,8 +45,8 @@ function App() {
   const handleEditAvatarClick = () => setIsEditAvatarPopupOpen(true);
   const handleEditProfileClick = () => setIsEditProfilePopupOpen(true);
   const handleAddPlaceClick = () => setIsAddPlacePopupOpen(true);
-  const handleLoggedIn = () => setLoggetIn(true);
-//  const handleIsInfoTooltip = () => setInfoTooltip(true);
+  const handleLoggedIn = () => setLoggedIn(true);
+  const handleIsInfoTooltip = () => setInfoTooltip(true);
 
   const handleCardClick = (card) => setSelectorCard(card);
 
@@ -58,21 +58,36 @@ function App() {
     setIsDeleteCardPopupOpen(false);
     setInfoTooltip(false);
   };
-
   React.useEffect(() => {
-    if (loggedIn) {
-    Promise.all([Api.getCards(), Api.getUserInfo()])
-      .then(([card, res]) => {
-        setCurrentCard(card);
-        setCurrentUser(res);
-      })
-      .catch((err) => console.log(err));
+    if (currentUser.loggedIn) {
+      Promise.all([Api.getUserInfo(), Api.getCards()])
+          .then(([res, card]) => {
+            setCurrentUser((prev) => {
+              return { ...prev, ...res };
+            });
+            setCurrentCard([card]);
+          })
+          .catch((error) => console.log(error));
     }
-  }, [loggedIn]);
-
-//  React.useEffect(() => {
-//    tokenCheck();
-//  }, []);
+  }, [currentUser.loggedIn]);
+  // React.useEffect(() => {
+  //   Promise.all([Api.getCards(), Api.getUserInfo()])
+  //    .then(([card, res]) => {
+  //      setCurrentCard(card);
+  //     setCurrentUser(res);
+  //   })
+  //    .catch((err) => console.log(err));
+  // },);
+  React.useEffect(() => {
+    Api
+        .getUserInfo()
+        .then((res) => {
+          setCurrentUser((prev) => {
+            return { ...prev, ...res.data, isLoggedIn: true };
+          });
+        })
+        .catch((error) => console.log(error));
+  }, []);
 
   const handleCardLike = (card) => {
     // Снова проверяем, есть ли уже лайк на этой карточке
@@ -131,66 +146,85 @@ function App() {
     setCardToDelete(card);
   };
 
-//  function tokenCheck() {
-//    if (localStorage.getItem("token")) {
-//      const jwt = localStorage.getItem("token");
-//      Auth.getContent(jwt)
-//        .then((res) => {
-//          if (res) {
-//            handleLoggedIn();
-//            setEmail(res.data.email);
-//            history.push("/");
-//          }
-//        })
-//        .catch((err) => console.log(err));
-//    }
-//  }
+  //  function tokenCheck() {
+  //    if (localStorage.getItem("token")) {
+  //      const jwt = localStorage.getItem("token");
+  //      Auth.getContent(jwt)
+  //        .then((res) => {
+  //          if (res) {
+  //            handleLoggedIn();
+  //            setEmail(res.data.email);
+  //            history.push("/");
+  //          }
+  //        })
+  //        .catch((err) => console.log(err));
+  //    }
+  //  }
 
-  function handleRegister(password, email) {
-    return Auth.register(password, email)
-      .then(data => {
-        if(data){
-        setEmail(email);
-        history.push("/sign-in");
-        setInfoTooltip(true);
-        setMessage({
-          imageTooltip: success,
-          titleTooltip: "Вы успешно зарегистрировались!",
-        });}
-        
-      })
-      .catch(() =>
-      setInfoTooltip(true),
-        setMessage({
-          imageTooltip: unSuccess,
-          titleTooltip: "Что-то пошло не так! Попробуйте ещё раз.",
-        })
-      )
-  }
-
-  function handleLogin(email, password) {
-    Auth.authorize(email, password)
-      .then(res => {
+  function handleRegister(email, password) {
+    Auth.register(email, password)
+      .then((data) => {
+        if (data) {
           setEmail(email);
-          //setInfoTooltip(false);
+          history.push("/sign-in");
+          setInfoTooltip(true);
           setMessage({
             imageTooltip: success,
-            titleTooltip: "Вы успешно вошли!",
+            titleTooltip: "Вы успешно зарегистрировались!",
           });
-          handleLoggedIn();
-          history.push("/");
+        }
       })
-      .catch((err) => 
-      console.log(err),
-      setInfoTooltip(true),
-        setMessage({
-          imageTooltip: unSuccess,
-          titleTooltip: "Что-то пошло не так! Попробуйте ещё раз.",
+      // .catch(err => {
+      //   setInfoTooltip(true),
+      //
+      //
+      // );
+        .catch(err => {
+          console.log(err);
+          setInfoTooltip(false);
+          setMessage({
+                  imageTooltip: unSuccess,
+                  titleTooltip: "Что-то пошло не так! Попробуйте ещё раз.",
+                });
         })
-      )
   }
+
+  // function handleLogin(email, password) {
+  //    Auth.authorize(email, password)
+  //      .then(res => {
+  //          setEmail(email);
+  //          setInfoTooltip(false);
+  //          setMessage({
+  //            imageTooltip: success,
+  //            titleTooltip: "Вы успешно вошли!",
+  //          });
+  //          handleLoggedIn();
+  //         history.push("/");
+  //     })
+  //      .catch((err) =>
+  //      console.log(err),
+  //      setInfoTooltip(false),
+  //        setMessage({
+  //          imageTooltip: unSuccess,
+  //          titleTooltip: "Что-то пошло не так! Попробуйте ещё раз.",
+  //        })
+  //      )
+  //  }
+  function handleLogin(email, password) {
+    Auth.authorize(email, password)
+      .then((res) => {
+        setEmail(email);
+        handleLoggedIn();
+        history.push("/");
+      })
+      .catch((err) => {
+        setInfoTooltip(false);
+        console.log(err);
+      });
+  }
+
   function handleSignOut() {
-    setLoggetIn(false);
+    setLoggedIn(false);
     setEmail("");
     history.push("/sign-in");
   }

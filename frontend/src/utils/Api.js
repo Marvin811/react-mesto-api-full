@@ -1,7 +1,7 @@
 class Api {
-    constructor({address, token}) {
+    constructor({address, headers}) {
         this._address = address;
-        this._token = localStorage.getItem("jwt");
+        this._token = headers['authorization'];
     }
 
     _handleResponse = (response) => {
@@ -15,7 +15,8 @@ class Api {
         return fetch(`${this._address}/users/me`, {
             headers: {
                 authorization: this._token
-            }
+            },
+            credentials: 'include',
         }).then(this._handleResponse)
     }
 
@@ -23,7 +24,8 @@ class Api {
         return fetch(`${this._address}/cards`, {
             headers: {
                 authorization: this._token
-            }
+            },
+            credentials: 'include',
         }).then(this._handleResponse)
     }
 
@@ -34,6 +36,7 @@ class Api {
                 authorization: this._token,
                 'Content-type': 'application/json'
             },
+            credentials: 'include',
             body: JSON.stringify(
                 avatar
             )
@@ -46,7 +49,8 @@ class Api {
             method: 'DELETE',
             headers: {
                 authorization: this._token
-            }
+            },
+            credentials: 'include',
         })
             .then(this._handleResponse)
     }
@@ -56,7 +60,8 @@ class Api {
             method: isLiked ? 'PUT' : 'DELETE',
             headers: {
                 authorization: this._token
-            }
+            },
+            credentials: 'include',
         })
             .then(this._handleResponse)
     }
@@ -68,6 +73,7 @@ class Api {
                 authorization: this._token,
                 'Content-type': 'application/json'
             },
+            credentials: 'include',
             body: JSON.stringify({
                 name,
                 about: info
@@ -83,6 +89,7 @@ class Api {
                 authorization: this._token,
                 'Content-type': 'application/json'
             },
+            credentials: 'include',
             body: JSON.stringify({
                 name: name,
                 link: link
@@ -93,7 +100,10 @@ class Api {
 }
 
 const api = new Api({
-    address: 'https://marvin811.nomoredomains.xyz'
+    address: 'https://marvin811.nomoredomains.xyz',
+    headers: {
+        'Content-Type': 'application/json'
+    },
 })
 
 export default api;
