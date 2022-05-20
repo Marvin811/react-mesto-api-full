@@ -2,22 +2,24 @@ const { NODE_ENV, JWT_SECRET } = process.env;
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+require('dotenv').config();
 
 const NotFoundError = require('../errors/notFoundError');
 const ValidationError = require('../errors/validationError');
 const ConflictError = require('../errors/ConflictError');
+const UnauthorizedError = require('../errors/UnauthorizedError');
 const { resCheck } = require('../errors/researchCheck');
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.send(user))
     .catch(next);
 };
 
 module.exports.getIdUsers = (req, res, next) => {
   User.findById(req.params.id)
     .then((data) => resCheck(data))
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new ValidationError('Переданы некорректные данные id пользователя'));
@@ -34,7 +36,7 @@ module.exports.getCurrentUser = (req, res, next) => {
 
   User.findById(_id)
     .then((data) => resCheck(data))
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new ValidationError('Переданы некорректные данные id пользователя'));
@@ -73,20 +75,18 @@ module.exports.createUser = (req, res, next) => {
 
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
-
   return User.findUserByCredentials(email, password)
     .then((user) => {
+      if (!email || !password) {
+        next(new UnauthorizedError('Ошибка авторизации'));
+      }
       const token = jwt.sign(
         { _id: user._id },
         NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
         { expiresIn: '7d' },
       );
-
-      res.cookie('jwt', token, {
-        maxAge: 3600000 * 24 * 7,
-        httpOnly: true,
-      })
-        .send({ message: 'Логин успешный' });
+      return res
+        .send({ token });
     })
     .catch(next);
 };
@@ -103,7 +103,7 @@ module.exports.updateUserInfo = (req, res, next) => {
     },
   )
     .then((data) => resCheck(data))
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'CastError' || err.name === 'ValidationError') {
         next(new ValidationError('Переданы некорректные данные id пользователя'));
@@ -127,7 +127,7 @@ module.exports.updateAvatar = (req, res, next) => {
     },
   )
     .then((data) => resCheck(data))
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'CastError' || err.name === 'ValidationError') {
         next(new ValidationError('Переданы некорректные данные id пользователя'));
