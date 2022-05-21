@@ -202,7 +202,7 @@ function App() {
 
   function handleSignOut() {
     removeToken("jwt");
-    setLoggedIn(true);
+    setLoggedIn(false);
     setEmail("");
     history.push("/sign-in");
   }
